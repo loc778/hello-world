@@ -51,7 +51,15 @@ pipeline:
 
               \r
 
-              grep -F \"hello world\" output.txt || exit 1\r
+              echo \"=== Checking expected greeting ===\"\r
+
+              if ! grep -Fq \"hello world\" output.txt; then\r
+
+              \    echo \"ERROR: Expected greeting not found\"\r
+
+              \    exit 1\r
+
+              fi\r
 
               \r
 
