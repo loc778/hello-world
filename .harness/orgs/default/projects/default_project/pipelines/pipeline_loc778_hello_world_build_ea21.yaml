@@ -17,8 +17,57 @@ pipeline:
           id: verify_script
           run:
             shell: bash
-            script: |-
-              python3 --version
-              python3 hello.py
+            script: "set -eu\r
+
+              \r
+
+              echo \"=== Python version ===\"\r
+
+              python3 --version\r
+
+              \r
+
+              echo \"=== Checking Python syntax ===\"\r
+
+              python3 -m py_compile hello.py\r
+
+              \r
+
+              echo \"=== Running application ===\"\r
+
+              output=\"$(python3 hello.py)\"\r
+
+              printf '%s\\n' \"$output\"\r
+
+              \r
+
+              echo \"$output\" | grep -F \"hello world\"\r
+
+              \r
+
+              echo \"=== Python validation passed ===\""
+        - name: Verify Existing EXE
+          run:
+            shell: bash
+            script: "set -eu\r
+
+              \r
+
+              echo \"=== Repository contents ===\"\r
+
+              ls -la\r
+
+              \r
+
+              echo \"=== Checking executable ===\"\r
+
+              test -f hello.exe\r
+
+              test -s hello.exe\r
+
+              \r
+
+              echo \"SUCCESS: hello.exe exists and is not empty.\""
+          id: Verify_Existing_EXE
   tags:
     onboarding: "true"
