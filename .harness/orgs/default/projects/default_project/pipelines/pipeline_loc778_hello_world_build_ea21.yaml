@@ -17,25 +17,45 @@ pipeline:
           id: verify_script
           run:
             shell: bash
-            script: "echo \"=== Operating system ===\"\r
+            script: "echo \"=== Python version ===\"\r
 
-              uname -a\r
-
-              \r
-
-              echo \"=== Available Python commands ===\"\r
-
-              command -v python3 || true\r
-
-              command -v python || true\r
-
-              command -v py || true\r
+              python3 --version || exit 1\r
 
               \r
 
-              echo \"=== Python version checks ===\"\r
+              echo \"=== Checking Python syntax ===\"\r
 
-              python3 --version"
+              python3 -m py_compile hello.py || exit 1\r
+
+              \r
+
+              echo \"=== Running application ===\"\r
+
+              python3 hello.py > output.txt 2>&1\r
+
+              result=$?\r
+
+              \r
+
+              cat output.txt\r
+
+              \r
+
+              if [ \"$result\" -ne 0 ]; then\r
+
+              \    echo \"ERROR: Python application failed\"\r
+
+              \    exit 1\r
+
+              fi\r
+
+              \r
+
+              grep -F \"hello world\" output.txt || exit 1\r
+
+              \r
+
+              echo \"=== Python validation passed ===\""
         - name: Verify Existing EXE
           run:
             shell: bash
