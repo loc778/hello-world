@@ -17,31 +17,41 @@ pipeline:
           id: verify_script
           run:
             shell: bash
-            script: "set -eu\r
+            script: "echo \"=== Python version ===\"\r
 
-              \r
-
-              echo \"=== Python version ===\"\r
-
-              python3 --version\r
+              python3 --version || exit 1\r
 
               \r
 
               echo \"=== Checking Python syntax ===\"\r
 
-              python3 -m py_compile hello.py\r
+              python3 -m py_compile hello.py || exit 1\r
 
               \r
 
               echo \"=== Running application ===\"\r
 
-              output=\"$(python3 hello.py)\"\r
+              python3 hello.py > output.txt 2>&1\r
 
-              printf '%s\\n' \"$output\"\r
+              result=$?\r
 
               \r
 
-              echo \"$output\" | grep -F \"hello world\"\r
+              cat output.txt\r
+
+              \r
+
+              if [ \"$result\" -ne 0 ]; then\r
+
+              \    echo \"ERROR: Python application failed\"\r
+
+              \    exit 1\r
+
+              fi\r
+
+              \r
+
+              grep -F \"hello world\" output.txt || exit 1\r
 
               \r
 
@@ -49,21 +59,27 @@ pipeline:
         - name: Verify Existing EXE
           run:
             shell: bash
-            script: "set -eu\r
+            script: "echo \"=== Checking executable ===\"\r
 
               \r
 
-              echo \"=== Repository contents ===\"\r
+              if [ ! -f hello.exe ]; then\r
 
-              ls -la\r
+              \    echo \"ERROR: hello.exe not found\"\r
+
+              \    exit 1\r
+
+              fi\r
 
               \r
 
-              echo \"=== Checking executable ===\"\r
+              if [ ! -s hello.exe ]; then\r
 
-              test -f hello.exe\r
+              \    echo \"ERROR: hello.exe is empty\"\r
 
-              test -s hello.exe\r
+              \    exit 1\r
+
+              fi\r
 
               \r
 
