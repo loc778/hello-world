@@ -1,0 +1,24 @@
+pipeline:
+  id: pipeline_loc778_hello_world_build_ea21
+  name: pipeline_loc778_hello_world_build_ea21
+  stages:
+    - id: build
+      name: Build
+      clone:
+        enabled: true
+      runtime: cloud
+      platform:
+        os: linux
+        arch: amd64
+      cache:
+        enabled: true
+      steps:
+        - name: Verify Python Script
+          id: verify_script
+          run:
+            shell: bash
+            script: |-
+              python3 --version
+              python3 hello.py
+  tags:
+    onboarding: "true"
